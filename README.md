@@ -1,78 +1,108 @@
-# 问赛 WenSai — Frontend
+# WenSai (问赛)
 
-React 19 + Tauri v2 桌面客户端，赛事材料评审工作台。
+Competition material review workbench built with React 19 and Tauri v2. Supports both web browser and native desktop.
 
-## 技术栈
+## Tech Stack
 
-- **React 19** + **TypeScript** + **Vite 8**
-- **Tailwind CSS v4** + 自定义组件
-- **React Router v7** + **React Query**
-- **Tauri v2** 桌面应用（NSIS 安装包）
-- **Playwright** E2E 测试
-- 中英双语 i18n
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, TypeScript, Vite 8 |
+| Styling | Tailwind CSS v4 |
+| Routing | React Router v7 |
+| Server State | React Query (TanStack) |
+| HTTP Client | Axios |
+| Desktop Shell | Tauri v2 (Rust) |
+| Testing | Playwright E2E |
+| i18n | Chinese / English |
 
-## 快速开始
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 18
+- Backend server running at `http://localhost:8000` (separate repository)
+- Rust toolchain (only needed for desktop builds)
+
+### Install & Run
 
 ```bash
 npm install
-npm run dev          # 浏览器开发 http://localhost:5173
-npm run tauri:dev    # Tauri 桌面开发（需 Rust 工具链）
-npm run build        # Web 生产构建
-npm run tauri:build  # 桌面安装包
+
+# Web development
+npm run dev
+
+# Desktop development (requires Rust)
+npm run tauri:dev
 ```
 
-后端需单独启动（默认连接 `http://localhost:8000`）。
-
-## 项目结构
-
-```
-frontend/
-├── src/
-│   ├── pages/           # 9 个页面
-│   │   ├── LoginPage        # 登录
-│   │   ├── RegisterPage     # 注册（邀请码）
-│   │   ├── DashboardPage    # 仪表盘
-│   │   ├── PaperListPage    # 论文列表
-│   │   ├── PaperDetailPage  # 论文详情 + 评审
-│   │   ├── PaperUploadPage  # 上传论文
-│   │   ├── ReviewFormPage   # 提交评审
-│   │   ├── PricingPage      # 收费说明
-│   │   └── SettingsPage     # 设置
-│   ├── components/      # Layout · TitleBar · WensaiUI · ProtectedRoute
-│   ├── api/             # auth · papers · reviews（axios）
-│   ├── context/         # AuthContext · LanguageContext
-│   ├── hooks/           # React Query hooks
-│   ├── locales/         # zh.ts · en.ts
-│   ├── utils/           # export · history · tauri
-│   └── data/            # 常量
-├── src-tauri/           # Tauri 配置 + Rust 入口
-│   ├── tauri.conf.json  # 窗口、CSP、打包配置
-│   ├── capabilities/    # 权限声明
-│   └── icons/           # 应用图标
-├── tests/e2e/           # Playwright 测试
-└── public/              # 静态资源
-```
-
-## Tauri 桌面应用
-
-- 自定义标题栏（无原生装饰）
-- 窗口尺寸 1180x760，最小 960x640
-- CSP 限制只允许连接 localhost:8000 后端
-- 打包目标：NSIS（Windows 安装包）
-
-构建桌面安装包：
+### Build
 
 ```bash
+# Web production build → dist-app/
+npm run build
+
+# Desktop installer → src-tauri/target/release/bundle/
 npm run tauri:build
 ```
 
-输出在 `src-tauri/target/release/bundle/nsis/`。
+### Other Commands
 
-## 环境要求
+```bash
+npm run lint         # ESLint check
+npm run test:e2e     # Playwright E2E tests
+```
 
-- Node.js >= 18
-- Rust 工具链（仅 Tauri 桌面端需要）
-- 后端运行在 http://localhost:8000
+## Project Structure
+
+```
+├── src/
+│   ├── api/             # Axios client, auth / papers / reviews API
+│   ├── components/      # Layout, TitleBar, WensaiUI, ProtectedRoute
+│   ├── context/         # AuthContext (JWT), LanguageContext (i18n)
+│   ├── data/            # App constants
+│   ├── hooks/           # React Query hooks
+│   ├── locales/         # zh.ts, en.ts
+│   ├── pages/           # 9 pages (Login, Register, Dashboard, etc.)
+│   ├── utils/           # Export, history helpers
+│   ├── App.tsx          # Router & Tauri titlebar detection
+│   └── main.tsx         # Entry point
+├── src-tauri/           # Tauri config, Rust entry, icons, permissions
+├── tests/e2e/           # Playwright specs
+├── public/              # Static assets (logo)
+└── .github/workflows/   # CI/CD (build & release)
+```
+
+## Pages
+
+| Route | Page | Auth |
+|-------|------|------|
+| `/login` | Login | Public |
+| `/register` | Register (invite code) | Public |
+| `/` | Dashboard | Protected |
+| `/papers` | Paper list | Protected |
+| `/papers/upload` | Upload paper | Protected |
+| `/papers/:id` | Paper detail & review | Protected |
+| `/papers/:paperId/review` | Submit review | Protected |
+| `/pricing` | Pricing info | Protected |
+| `/settings` | User settings | Protected |
+
+## Desktop App (Tauri)
+
+- Custom titlebar — no native window decorations
+- Window: 1180x760 (min 960x640)
+- CSP restricts connections to `localhost:8000` backend only
+- Targets: Windows (NSIS), macOS (DMG), Linux (AppImage / deb)
+
+## CI/CD
+
+Push to `release` branch triggers GitHub Actions to build installers for Windows, macOS (ARM + Intel), and Linux, then publishes a GitHub Release automatically.
+
+## Backend
+
+The backend runs as a separate service. In development:
+
+- **Web mode**: Vite proxies `/api` to `http://localhost:8000`
+- **Desktop mode**: Axios calls `http://127.0.0.1:8000/api` directly
 
 ## License
 
