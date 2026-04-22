@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-app/
+
+# Tauri build output
+src-tauri/target/
+src-tauri/gen/
+
+# Python
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Playwright
+test-results/
+playwright-report/
