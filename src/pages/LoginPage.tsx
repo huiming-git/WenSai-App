@@ -1,9 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login, getMe } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 import { APP_NAME } from '../data/wensai'
 import { LogoMark } from '../components/WensaiUI'
+import client from '../api/client'
+
+type ConnStatus = { ok: boolean; label: string; detail: string }
+
+function useServerStatus(): ConnStatus {
+  const [status, setStatus] = useState<ConnStatus>({ ok: false, label: '检测中…', detail: '' })
+
+  useEffect(() => {
+    const url = client.defaults.baseURL || '/api'
+    setStatus({ ok: false, label: '连接中…', detail: url })
+    client.get('/health', { timeout: 5000 })
+      .then(() => setStatus({ ok: true, label: '已连接', detail: url }))
+      .catch((err) => {
+        let detail: string
+        if (!err.response) {
+          detail = err.code === 'ECONNABORTED' ? `连接超时 (${url})` : `无法连接服务器 (${url})`
+        } else {
+          detail = `服务器返回 ${err.response.status} (${url})`
+        }
+        setStatus({ ok: false, label: '未连接', detail })
+      })
+  }, [])
+
+  return status
+}
 
 export default function LoginPage() {
   const [username, setUsername] = useState<string>('')
@@ -12,6 +37,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState<boolean>(false)
   const { loginSuccess } = useAuth()
   const navigate = useNavigate()
+  const server = useServerStatus()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -88,6 +114,13 @@ export default function LoginPage() {
           没有账号？{' '}
           <Link to="/register" className="font-medium text-cyan-700 no-underline hover:underline">注册</Link>
         </p>
+
+        <div className={`mt-4 flex items-center justify-center gap-1.5 text-xs ${server.ok ? 'text-emerald-600' : 'text-slate-400'}`}>
+          <span className={`inline-block h-1.5 w-1.5 rounded-full ${server.ok ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+          <span>{server.label}</span>
+          <span className="text-slate-300">·</span>
+          <span className="truncate max-w-[200px]" title={server.detail}>{server.detail}</span>
+        </div>
       </div>
       </section>
     </div>
