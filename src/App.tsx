@@ -13,11 +13,12 @@ import PricingPage from './pages/PricingPage'
 import SettingsPage from './pages/SettingsPage'
 
 const isTauri = '__TAURI_INTERNALS__' in window
+const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
 
 export default function App() {
   return (
     <div className="flex h-screen flex-col">
-      {isTauri && <TitleBar />}
+      {isTauri && !isMobile && <TitleBar />}
       <div className="min-h-0 flex-1">
     <Routes>
       {/* Public routes */}
