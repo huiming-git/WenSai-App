@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getPapers } from '../api/papers'
 import { EmptyState, Icon, Panel } from '../components/WensaiUI'
-import { mergeHistory, paperToHistory, readLocalHistory } from '../utils/history'
+import { mergeHistory, paperToHistory, readLocalHistory, saveActiveDraft } from '../utils/history'
 import type { HistoryItem } from '../types'
 
 export default function PaperListPage() {
@@ -36,6 +36,21 @@ export default function PaperListPage() {
     if (filter === 'all') return true
     return item.source === filter
   })
+
+  const openHistoryItem = (item: HistoryItem) => {
+    if (item.paperId) {
+      navigate(`/papers/${item.paperId}`)
+      return
+    }
+
+    saveActiveDraft({
+      title: item.title,
+      prompt: item.prompt,
+      competition: item.competition,
+      created_at: item.created_at,
+    })
+    navigate('/suggestions')
+  }
 
   return (
     <div className="min-h-full bg-[#f5f7fb] p-4 md:p-6">
@@ -91,7 +106,7 @@ export default function PaperListPage() {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => item.paperId ? navigate(`/papers/${item.paperId}`) : navigate('/')}
+                onClick={() => openHistoryItem(item)}
                 className="rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-cyan-300 hover:bg-cyan-50"
               >
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">

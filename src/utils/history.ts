@@ -1,5 +1,5 @@
-import { LOCAL_HISTORY_KEY } from '../data/wensai'
-import type { Competition, HistoryItem, Paper } from '../types'
+import { ACTIVE_DRAFT_KEY, LOCAL_HISTORY_KEY } from '../data/wensai'
+import type { ActiveDraft, Competition, HistoryItem, Paper } from '../types'
 
 export function readLocalHistory(): HistoryItem[] {
   try {
@@ -26,6 +26,28 @@ export function saveLocalCommand(command: { title: string; prompt: string; compe
   }
   writeLocalHistory([nextItem, ...current])
   return nextItem
+}
+
+export function readActiveDraft(): ActiveDraft | null {
+  try {
+    const raw = localStorage.getItem(ACTIVE_DRAFT_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+export function saveActiveDraft(draft: Omit<ActiveDraft, 'created_at'> & { created_at?: string }): ActiveDraft {
+  const nextDraft: ActiveDraft = {
+    ...draft,
+    created_at: draft.created_at || new Date().toISOString(),
+  }
+  localStorage.setItem(ACTIVE_DRAFT_KEY, JSON.stringify(nextDraft))
+  return nextDraft
+}
+
+export function clearActiveDraft(): void {
+  localStorage.removeItem(ACTIVE_DRAFT_KEY)
 }
 
 export function paperToHistory(paper: Paper): HistoryItem {

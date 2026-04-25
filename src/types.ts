@@ -4,6 +4,7 @@ export interface User {
   id: number
   username: string
   created_at: string
+  credits?: number
 }
 
 export interface Paper {
@@ -127,6 +128,16 @@ export interface HistoryItem {
   source: 'local' | 'backend'
   created_at: string
   status?: string
+}
+
+export interface ActiveDraft {
+  title: string
+  prompt: string
+  competition: string
+  fileName?: string
+  fileSize?: number
+  paperId?: number
+  created_at: string
 }
 
 export interface AppSettings {

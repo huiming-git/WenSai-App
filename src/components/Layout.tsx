@@ -40,7 +40,6 @@ export default function Layout() {
             <nav className="flex-1 space-y-1 px-3">
               <NavItem to="/" end icon="home" label="首页" />
               <NavItem to="/history" icon="history" label="历史" />
-              <NavItem to="/upload" icon="upload" label="上传" />
               <NavItem to="/suggestions" icon="suggest" label="建议" />
               <NavItem to="/pricing" icon="price" label="收费" />
               <NavItem to="/settings" icon="settings" label="设置" />
@@ -49,7 +48,7 @@ export default function Layout() {
             <div className="px-3 py-5">
               <div className="rounded-lg border border-slate-200 bg-white p-4">
                 <p className="text-sm font-semibold text-slate-800">任务状态</p>
-                <p className="mt-2 text-xs leading-5 text-slate-500">等待上传材料或输入修改命令。</p>
+                <p className="mt-2 text-xs leading-5 text-slate-500">从首页上传材料并输入修改命令。</p>
               </div>
             </div>
 

@@ -29,7 +29,7 @@ export default function RegisterPage() {
     <div className="grid h-full bg-[#eef3f8] p-4 lg:grid-cols-[minmax(0,1fr)_460px]">
       <section className="hidden flex-col items-center justify-center rounded-lg border border-slate-200 bg-white text-center shadow-xl shadow-slate-200/70 lg:flex">
         <LogoMark className="h-40 w-40" />
-        <h1 className="mt-6 text-4xl font-semibold text-slate-950">{APP_NAME}</h1>
+        <p className="mt-6 text-4xl font-semibold text-slate-950">{APP_NAME}</p>
         <p className="mt-3 text-sm font-medium text-slate-500">Triggered anywhere, completed locally</p>
         <p className="mt-2 text-sm text-slate-400">中国创新创业赛事材料助手</p>
       </section>

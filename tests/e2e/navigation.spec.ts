@@ -75,7 +75,7 @@ test.describe('Authenticated Navigation', () => {
     });
 
     // Mock the dashboard data endpoints so the page doesn't fail
-    await page.route('**/api/papers**', (route) => {
+    await page.route(/\/api\/papers(?:\?.*)?$/, (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',

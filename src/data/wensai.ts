@@ -8,7 +8,7 @@ export const COMPETITIONS: Competition[] = [
   {
     id: 'innovation',
     name: '中国国际大学生创新大赛',
-    shortName: '创新大赛',
+    shortName: '创新大赛-中国国际大学生创新大赛',
     tone: 'cyan',
     focus: '项目价值、商业计划、路演表达、团队执行',
   },
@@ -43,7 +43,7 @@ export const SUGGESTION_TEMPLATES: SuggestionTemplate[] = [
     title: '封面和定位',
     level: '优先修改',
     content:
-      '封面需要清晰出现项目名称、学校、团队、赛道和一句话定位。建议把口号型标题改成"对象 + 场景 + 价值"的表达。',
+      '封面需要清晰出现项目名称、学校、团队、赛道和一句话定位。建议把口号型标题改成"对象 + 场景 + 价值"的表达，并在第一页就对齐所选赛事。',
   },
   {
     title: '赛事适配',
@@ -55,7 +55,7 @@ export const SUGGESTION_TEMPLATES: SuggestionTemplate[] = [
     title: 'PPT 大文件',
     level: '已支持',
     content:
-      '支持超 100M PPT。大文件会提示处理时间，并预留 Tauri 本地文件通道以提升桌面端体验。',
+      '首页支持直接选择 PPT / PDF / Word 等材料。前端不限制 100M 以上文件，实际上传成功取决于浏览器、网络和后端部署限制。',
   },
   {
     title: '导出交付',
@@ -68,32 +68,32 @@ export const SUGGESTION_TEMPLATES: SuggestionTemplate[] = [
 export const WORKFLOW_STEPS: WorkflowStep[] = [
   { label: '选择赛事', value: '三类赛事之一', done: true },
   { label: '保存命令', value: '本地 + 后端', done: true },
-  { label: '上传材料', value: '支持超 100M PPT', done: true },
+  { label: '首页上传材料', value: '材料名称 + 文件', done: true },
   { label: '生成建议', value: 'AI / 人工复核', done: false },
   { label: '导出结果', value: 'Word / PDF / 复制', done: false },
 ]
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
-    name: '个人版',
-    price: '¥29 / 次',
-    note: '价格待定',
-    description: '适合学生团队临时检查一份材料',
-    features: ['单次 PPT 诊断', '修改建议导出', '答辩问题清单', '历史命令本地保存'],
+    name: '个人按次',
+    price: '20 积分 / 次',
+    note: '建议方案',
+    description: '适合个人或单个团队按材料消耗积分',
+    features: ['上传一份材料并生成修改建议', '支持 Word / PDF / 复制导出', '历史命令本地保存', '适合临时检查和迭代修改'],
   },
   {
-    name: '团队版',
-    price: '¥199 / 月',
-    note: '价格待定',
-    description: '适合一个项目团队持续打磨材料',
-    features: ['不限次数草稿检查', '团队历史记录', '多版本建议对比', '路演稿辅助生成'],
+    name: '积分包',
+    price: '¥49 起充',
+    note: '可扩展',
+    description: '适合多次修改，按生成、导出和大文件处理扣减',
+    features: ['充值后进入个人积分余额', '普通问答约 20 积分 / 轮', 'PPT 修改约 200-800 积分 / 次', '视频或复杂材料可单独计费'],
   },
   {
-    name: '学校版',
-    price: '¥19,900 / 年',
-    note: '价格待定',
-    description: '适合学院、创新创业中心和赛事管理部门',
-    features: ['批量团队管理', '校内模板库', '年度数据看板', '私有化和 Tauri 桌面端预留'],
+    name: '学校按年',
+    price: '年度积分池',
+    note: '推荐给学校',
+    description: '适合学院、创新创业中心和赛事管理部门统一采购',
+    features: ['按年配置学校积分额度', '团队可按项目或成员分配', '支持查看消耗明细与剩余额度', '后续可接入校内模板和数据看板'],
   },
 ]
 
@@ -101,5 +101,7 @@ export const DEFAULT_COMMAND =
   '请检查这份 PPT 是否符合赛事要求，并给出可以直接导出的修改建议。'
 
 export const LOCAL_HISTORY_KEY = 'wensai.history.commands'
+
+export const ACTIVE_DRAFT_KEY = 'wensai.active.draft'
 
 export const SETTINGS_KEY = 'wensai.settings'
