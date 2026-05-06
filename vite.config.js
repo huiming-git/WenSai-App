@@ -9,7 +9,7 @@ export default defineConfig({
     outDir: 'dist-app',
   },
   server: {
-    host: '127.0.0.1',
+    host: '0.0.0.0',
     port: 1420,
     strictPort: true,
     watch: {
@@ -17,7 +17,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
       },
     },

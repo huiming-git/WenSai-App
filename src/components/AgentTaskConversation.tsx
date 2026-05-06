@@ -368,25 +368,6 @@ export default function AgentTaskConversation({
             </div>
           ) : null}
 
-          {files.length ? (
-            <div className="flex justify-start">
-              <div
-                className="max-w-[82%] rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm"
-                onContextMenu={(menuEvent) => openExportContextMenu(menuEvent, buildFilesSuggestionEvent(taskId, files))}
-              >
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">输出文件</p>
-                <div className="mt-3 space-y-2">
-                  {files.map((file) => (
-                    <div key={file.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                      <p className="truncate text-[13px] font-medium text-slate-900">{file.filename}</p>
-                      <p className="mt-1 text-[11px] text-slate-500">{file.source}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
           {(task?.result || task?.error) ? (
             <div className="flex justify-start">
               <div
@@ -626,20 +607,6 @@ function getTaskDisplayPrompt(task: AgentTask | null, taskId: number | string) {
   if (typeof rawPrompt === 'string' && rawPrompt.trim()) return rawPrompt.trim()
   if (task?.prompt?.trim()) return task.prompt.trim()
   return `任务 #${taskId}`
-}
-
-function buildFilesSuggestionEvent(taskId: number | string, files: AgentFile[]): AgentTaskEvent {
-  return {
-    id: -1000000,
-    task_id: Number(taskId),
-    type: 'manual_output_files',
-    content: [
-      '输出文件',
-      ...files.map((file) => `- ${file.filename}${file.source ? `（${file.source}）` : ''}`),
-    ].join('\n'),
-    metadata: { files },
-    created_at: files[0]?.created_at || new Date().toISOString(),
-  }
 }
 
 function buildResultSuggestionEvent(taskId: number | string, task: AgentTask | null): AgentTaskEvent {
