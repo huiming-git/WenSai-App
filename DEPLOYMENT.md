@@ -97,6 +97,40 @@ src-tauri/target/release/bundle/appimage/
 npm run tauri:dev
 ```
 
+## Android 发布
+
+Android Release 必须签名后才能安装。GitHub Actions 需要在仓库 Secrets 中配置：
+
+| Secret | 说明 |
+| --- | --- |
+| `ANDROID_KEYSTORE_BASE64` | release keystore 的 base64 内容 |
+| `ANDROID_KEYSTORE_PASSWORD` | keystore 密码 |
+| `ANDROID_KEY_ALIAS` | 签名 key alias |
+| `ANDROID_KEY_PASSWORD` | 签名 key 密码 |
+
+生成 keystore：
+
+```bash
+keytool -genkeypair -v \
+  -keystore wensai-release.keystore \
+  -alias wensai \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
+```
+
+写入 GitHub Secret：
+
+```bash
+base64 -w 0 wensai-release.keystore
+```
+
+Actions 会先生成 Tauri 的 unsigned release APK，再执行 `zipalign` 和 `apksigner`，最终上传：
+
+```text
+WenSai-android-universal-release.apk
+```
+
 ## 实时任务页面
 
 页面：

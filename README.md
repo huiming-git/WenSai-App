@@ -165,6 +165,8 @@ Nginx 应该：
 
 更多 Web / Tauri 发布说明见 [DEPLOYMENT.md](./DEPLOYMENT.md)。完整后端编排通常放在部署仓库或服务器上层工作区，不应让前端仓库直接持有 Backend/AgentSDK 的密钥配置。
 
+Android APK 通过 GitHub Actions 构建时必须使用 release keystore 签名。仓库需要配置 `ANDROID_KEYSTORE_BASE64`、`ANDROID_KEYSTORE_PASSWORD`、`ANDROID_KEY_ALIAS`、`ANDROID_KEY_PASSWORD`，否则 CI 会拒绝发布未签名 APK。具体见 [DEPLOYMENT.md](./DEPLOYMENT.md#android-发布)。
+
 ## 维护注意
 
 - 新接口先改 `src/api/*` 和 `src/types.ts`，再接页面。

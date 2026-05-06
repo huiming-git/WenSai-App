@@ -111,10 +111,45 @@ jobs:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
-      - name: Upload APK to Release
+      - name: Sign Android APK
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${ANDROID_KEYSTORE_BASE64}" ] || [ -z "${ANDROID_KEYSTORE_PASSWORD}" ] || [ -z "${ANDROID_KEY_ALIAS}" ] || [ -z "${ANDROID_KEY_PASSWORD}" ]; then
+            echo "Missing Android signing secrets. Set ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD." >&2
+            exit 1
+          fi
+
+          unsigned_apk="$(find src-tauri/gen/android/app/build/outputs/apk/universal/release -name '*-unsigned.apk' -print -quit)"
+          if [ -z "${unsigned_apk}" ]; then
+            echo "Unsigned APK not found." >&2
+            find src-tauri/gen/android/app/build/outputs/apk -type f -name '*.apk' -print >&2
+            exit 1
+          fi
+
+          build_tools="$(find "${ANDROID_HOME}/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+          mkdir -p artifacts/android
+          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > artifacts/android/release.keystore
+
+          "${build_tools}/zipalign" -f -p 4 "${unsigned_apk}" artifacts/android/WenSai-android-universal-release-aligned.apk
+          "${build_tools}/apksigner" sign \
+            --ks artifacts/android/release.keystore \
+            --ks-pass "pass:${ANDROID_KEYSTORE_PASSWORD}" \
+            --ks-key-alias "${ANDROID_KEY_ALIAS}" \
+            --key-pass "pass:${ANDROID_KEY_PASSWORD}" \
+            --out artifacts/android/WenSai-android-universal-release.apk \
+            artifacts/android/WenSai-android-universal-release-aligned.apk
+          "${build_tools}/apksigner" verify --verbose --print-certs artifacts/android/WenSai-android-universal-release.apk
+
+      - name: Upload signed APK to Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: "WenSai ${{ github.ref_name }}"
           files: |
-            src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+            artifacts/android/WenSai-android-universal-release.apk
