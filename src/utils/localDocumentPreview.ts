@@ -1,4 +1,4 @@
-import client, { resolveApiUrl } from '../api/client'
+import client, { API_BASE_URL, resolveApiUrl } from '../api/client'
 import type { AgentFile, FilePreview, WorkspaceFile } from '../types'
 
 type CacheableFile = AgentFile | WorkspaceFile
@@ -129,8 +129,17 @@ function buildPreviewSignature(file: CacheableFile) {
 }
 
 async function downloadPreviewImageAsDataUrl(url: string) {
-  const response = await client.get<Blob>(resolveApiUrl(url), { responseType: 'blob' })
+  const response = await client.get<Blob>(normalizePreviewImageUrl(url), { responseType: 'blob' })
   return blobToDataUrl(response.data)
+}
+
+function normalizePreviewImageUrl(url: string) {
+  if (/^https?:\/\//i.test(url)) return resolveApiUrl(url)
+  if (!API_BASE_URL.startsWith('http')) {
+    const base = API_BASE_URL.replace(/\/+$/, '')
+    if (base && url.startsWith(`${base}/`)) return url.slice(base.length) || '/'
+  }
+  return resolveApiUrl(url)
 }
 
 function blobToDataUrl(blob: Blob): Promise<string> {
