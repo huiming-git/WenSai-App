@@ -1,8 +1,8 @@
 import { getCurrentWindow } from '@tauri-apps/api/window'
 
-const appWindow = getCurrentWindow()
-
 export default function TitleBar() {
+  const appWindow = getCurrentWindow()
+
   const startDrag = (e: React.MouseEvent) => {
     // Only drag from the bar itself, not from buttons
     if ((e.target as HTMLElement).closest('button')) return

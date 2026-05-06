@@ -1,35 +1,3 @@
-import type { Review, SuggestionTemplate } from '../types'
-
-interface BuildSuggestionTextParams {
-  title: string
-  competition: string
-  prompt: string
-  suggestions: SuggestionTemplate[]
-  reviews: Review[]
-}
-
-export function buildSuggestionText({ title, competition, prompt, suggestions, reviews }: BuildSuggestionTextParams): string {
-  const suggestionText = suggestions
-    .map((item, index) => `${index + 1}. ${item.title}\n${item.content}`)
-    .join('\n\n')
-  const reviewText = reviews?.length
-    ? reviews.map((item, index) => `评审 ${index + 1}\n评分：${item.score}/10\n建议：${item.recommendation}\n${item.content}`).join('\n\n')
-    : '暂无后端评审结果，当前导出为问赛预置修改建议。'
-
-  return [
-    `问赛修改建议`,
-    `材料：${title || '未命名材料'}`,
-    `赛事：${competition || '未选择'}`,
-    `命令：${prompt || '生成修改建议'}`,
-    '',
-    '一、结构化修改建议',
-    suggestionText,
-    '',
-    '二、评审记录',
-    reviewText,
-  ].join('\n')
-}
-
 export async function copySuggestion(text: string): Promise<void> {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(text)

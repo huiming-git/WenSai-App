@@ -57,7 +57,7 @@ test.describe('Authenticated Navigation', () => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ access_token: 'fake-test-token' }),
+        body: JSON.stringify({ access_token: 'stub-test-token' }),
       });
     });
 
@@ -75,7 +75,7 @@ test.describe('Authenticated Navigation', () => {
     });
 
     // Mock the dashboard data endpoints so the page doesn't fail
-    await page.route('**/api/papers**', (route) => {
+    await page.route(/\/api\/papers(?:\?.*)?$/, (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',

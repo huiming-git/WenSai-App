@@ -5,6 +5,7 @@ import en from '../locales/en'
 interface LanguageContextValue {
   lang: string
   toggleLang: () => void
+  setLang: (lang: 'zh' | 'en') => void
   t: (key: string) => string
 }
 
@@ -14,20 +15,22 @@ const LanguageContext = createContext<LanguageContextValue | null>(null)
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<string>(() => localStorage.getItem('lang') || 'zh')
 
-  const toggleLang = useCallback(() => {
-    setLang((prev) => {
-      const next = prev === 'zh' ? 'en' : 'zh'
-      localStorage.setItem('lang', next)
-      return next
-    })
+  const applyLang = useCallback((next: 'zh' | 'en') => {
+    setLang(next)
+    localStorage.setItem('lang', next)
+    document.documentElement.lang = next
   }, [])
+
+  const toggleLang = useCallback(() => {
+    applyLang(lang === 'zh' ? 'en' : 'zh')
+  }, [applyLang, lang])
 
   const t = useCallback((key: string): string => {
     return dictionaries[lang]?.[key] || dictionaries['en']?.[key] || key
   }, [lang])
 
   return (
-    <LanguageContext.Provider value={{ lang, toggleLang, t }}>
+    <LanguageContext.Provider value={{ lang, toggleLang, setLang: applyLang, t }}>
       {children}
     </LanguageContext.Provider>
   )
