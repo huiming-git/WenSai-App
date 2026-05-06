@@ -163,7 +163,7 @@ Nginx 应该：
 - 反向代理 `/api/` 到 Backend `127.0.0.1:8000`
 - 反向代理 `/ws/` 到 Backend WebSocket
 
-完整生产说明见仓库根目录 [PRODUCTION_DEPLOYMENT.md](../PRODUCTION_DEPLOYMENT.md)。
+更多 Web / Tauri 发布说明见 [DEPLOYMENT.md](./DEPLOYMENT.md)。完整后端编排通常放在部署仓库或服务器上层工作区，不应让前端仓库直接持有 Backend/AgentSDK 的密钥配置。
 
 ## 维护注意
 
