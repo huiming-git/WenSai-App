@@ -42,10 +42,10 @@ export default function App() {
   }, [])
 
   return (
-    <div className={['flex h-screen flex-col', isDesktopShell() ? 'bg-transparent' : 'bg-white'].join(' ')}>
+    <div className={['app-root-shell flex h-screen flex-col', isDesktopShell() ? 'bg-transparent' : 'bg-white'].join(' ')}>
       <div
         className={[
-          'min-h-0 flex flex-1 flex-col',
+          'app-shell-surface min-h-0 flex flex-1 flex-col',
           isDesktopShell()
             ? [
                 'overflow-hidden bg-white',
