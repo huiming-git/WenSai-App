@@ -163,8 +163,10 @@ export default function TaskCreatePage({ onSandboxCreated }: TaskCreatePageProps
     setProgress('正在创建沙盒任务')
     try {
       const finalPrompt = buildTaskPrompt(message.prompt, message.categories)
+      const runtimeAgentType = resolveRuntimeAgentType(message.agentType, message.model)
       const res = await createTask({
-        agent_type: message.agentType,
+        agent_type: runtimeAgentType,
+        runtime: runtimeAgentType,
         model: message.model,
         prompt: finalPrompt,
         dispatch: false,
@@ -662,6 +664,11 @@ function buildTaskPrompt(prompt: string, categories: string[]): string {
   const basePrompt = prompt.trim()
   if (!categories.length) return basePrompt
   return `任务方向：${categories.join('、')}\n${basePrompt}`
+}
+
+function resolveRuntimeAgentType(agentType: string, model: string): string {
+  if (model === 'deepseek-v4') return 'deepseek'
+  return agentType || 'hermes_acp'
 }
 
 function getRelativePath(file: File): string {

@@ -335,6 +335,7 @@ export default function SandboxWorkspacePage({
       const nextAgentType = queuedMessage?.agentType ?? agentType
       const nextModel = queuedMessage?.model ?? model
       const nextEffort = queuedMessage?.effort ?? effort
+      const runtimeAgentType = resolveRuntimeAgentType(nextAgentType || selectedSandbox?.agent_type || 'hermes_acp', nextModel)
       const promptWithFiles = appendAttachedFilesToPrompt(rawPrompt, nextAttachedFiles)
       const prompt = nextMode === 'ask' || creatingConversation ? promptWithFiles : buildFollowUpPrompt(selectedSandbox, promptWithFiles)
       const input = {
@@ -356,7 +357,8 @@ export default function SandboxWorkspacePage({
       }
       const res = await createTask({
         workspace_id: user?.active_workspace_id ?? null,
-        agent_type: nextAgentType || selectedSandbox?.agent_type || 'hermes_acp',
+        agent_type: runtimeAgentType,
+        runtime: runtimeAgentType,
         model: nextModel,
         prompt,
         dispatch: false,
@@ -371,7 +373,7 @@ export default function SandboxWorkspacePage({
         title: rawPrompt,
         prompt,
         status: (startRes.data.status || 'queued') as AgentTask['status'],
-        agent_type: nextAgentType || selectedSandbox.agent_type || 'hermes_acp',
+        agent_type: runtimeAgentType,
         model: nextModel,
         input,
         created_at: new Date().toISOString(),
@@ -1062,6 +1064,11 @@ function appendAttachedFilesToPrompt(prompt: string, files: ConversationAttachme
     '本轮已附加沙盒文件，文件会出现在当前运行工作目录的 input/ 下：',
     ...files.map((file) => `- input/${file.filename}`),
   ].join('\n')
+}
+
+function resolveRuntimeAgentType(agentType: string, model: string) {
+  if (model === 'deepseek-v4') return 'deepseek'
+  return agentType || 'hermes_acp'
 }
 
 function isSandboxFileDrag(event: React.DragEvent<HTMLElement>) {

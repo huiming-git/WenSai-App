@@ -4,6 +4,7 @@ import type { AgentFile, AgentTask, Approval, TaskEventPage } from '../types'
 interface CreateTaskRequest {
   workspace_id?: number | null
   agent_type: string
+  runtime?: string
   model: string
   prompt: string
   input?: Record<string, unknown>
